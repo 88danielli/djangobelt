@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Success</title>
+        {% load staticfiles %}
+        <link rel="stylesheet" href="{% static 'djangobelt_app/css/style.css' %}">
+    </head>
+    <body>
+        <div class="headerLeft">
+            <h1>Welcome, {{ request.session.active_user.alias}}!</h1>
+        </div>
+        <div class="headerRight">
+            <button><a href="/logout">Logout</a></button>
+        </div>
+        <h2>{{count_of_unique_user_list}} people poked you!</h2>
+
+        {% if messages %}
+            <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+            {{ message }}
+            </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="box">
+            {% for i in unique_user_list %}
+            <p>{{i.user__alias}} poked you {{i.user__alias__count}} times.</p>
+            {% endfor %}
+        </div>
+
+        <h3>People you may want to poke:</h3>
+
+        <table>
+            <thead>
+                <th>Name</th>
+                <th>Alias</th>
+                <th>Email Address</th>
+                <th>Poke History</th>
+                <th>Action</th>
+            </thead>
+            {% for user in user_list %}
+                <tr>
+                    <td>{{user.name}}</td>
+                    <td>{{user.alias}}</td>
+                    <td>{{user.email}}</td>
+                    {% for i in active_user_pokes %}
+                        {% if i.friend_id == user.id %}
+                        <td>{{i.friend_id__count}} pokes</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td><button><a href="/add_poke/{{ user.id }}">Poke!</a></button></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
